@@ -73,7 +73,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="form-group">
-                    <textarea ng-model="sourceText" class="form-control" rows="10"></textarea>
+                    <textarea ng-model="source_text" class="form-control" rows="10"></textarea>
                 </div>
             </div>
         </div>
@@ -85,17 +85,17 @@
                 </label>
             </div>
             <div class="col-lg-6">
-                <span class="btn btn-primary">送出</span>
+                <span class="btn btn-primary" ng-click="seg()">送出</span>
             </div>
         </div>
         {% endverbatim %}
     </div>
-
+    <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
+    <script src="{% static 'bower_components/underscore/underscore-min.js' %}"></script> 
     <script src="{% static 'bower_components/angular/angular.min.js' %}"></script> 
     <script src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script> 
     <script src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script> 
     <script src="{% static 'bower_components/angular-file-upload/dist/angular-file-upload.min.js' %}"></script>
-    <script src="{% static 'bower_components/angular-bootstrap-checkbox/angular-bootstrap-checkbox.js' %}"></script>
     <script src="{% static 'js/diffseg.js' %}"></script>
 </body>
 
