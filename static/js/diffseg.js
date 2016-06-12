@@ -16,9 +16,10 @@ angular.module('DiffsegApp', ['angularFileUpload', 'angular-loading-bar', 'ngSan
 	};
 
     $scope.seg = function() {
+        $scope.segmentators_selected = Object.keys(_.pick($scope.segmentators, _.identity));
         var data = {
             source_text: $scope.source_text,
-            segmentators: Object.keys(_.pick($scope.segmentators, _.identity)),
+            segmentators: $scope.segmentators_selected,
         };
         $http.post(Urls.seg(), data)
             .then(function(resp) {

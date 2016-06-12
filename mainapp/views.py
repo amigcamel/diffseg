@@ -79,9 +79,10 @@ def seg(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         source_text = data['source_text']
+        source_text = source_text.replace('\n', ' ')  # remove linebreaks
         segmentators = data['segmentators']
         segmentators = [i.lower() for i in segmentators]
-        pool = ThreadPool(processes=1)
+        pool = ThreadPool(processes=5)
         res = pool.starmap_async(_segwrap, zip(segmentators, repeat(source_text)))
         vals = res.get()
         seg_with_diff = segcomp(vals)

@@ -84,8 +84,8 @@
                     <input type="checkbox" ng-model="segmentators[segmentator]"> {{segmentator}} 
                 </label>
             </div>
-            <div class="col-lg-6">
-                <span class="btn btn-primary" ng-click="seg()">送出</span>
+            <div class="col-lg-offset-4 col-lg-2">
+                <span class="btn btn-primary btn-block" ng-click="seg()">送出</span>
             </div>
         </div>
         {% endverbatim %}
@@ -96,6 +96,7 @@
     <div class="container" ng-show="segs">
         <div class="row">
             <div class="col-lg-{{12/segs.length}}" ng-repeat="seg in segs">
+                <h4>{{segmentators_selected[$index]}}</h4>
                 <div class="alert alert-info" ng-bind-html="seg"></div>
             </div>
         </div>
