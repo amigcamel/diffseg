@@ -62,7 +62,7 @@ def segcomp(segres_list):
                 con.append(''.join(pat.findall(hw)))
             else:
                 con.append('<span class="diff">' + ''.join(pat.findall(hw)) + '</span>')
-        return con
+        return ' '.join(con)
 
     hwl = [_idxer(segres) for segres in segres_list]  # hwl: hash words list
     intsec = set.intersection(*map(set, hwl))

@@ -1,4 +1,4 @@
-angular.module('DiffsegApp', ['angularFileUpload', 'angular-loading-bar'])
+angular.module('DiffsegApp', ['angularFileUpload', 'angular-loading-bar', 'ngSanitize'])
 
 .config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
@@ -22,7 +22,7 @@ angular.module('DiffsegApp', ['angularFileUpload', 'angular-loading-bar'])
         };
         $http.post(Urls.seg(), data)
             .then(function(resp) {
-                console.log(resp);
+                $scope.segs = resp.data;
             });
     };
 

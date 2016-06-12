@@ -23,6 +23,7 @@
     "angular-animate": "~1.5.6",
     "bootstrap": "~3.3.6",
     "angular-file-upload": "~2.3.3",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "angular-sanitize": "~1.5.6"
   }
 }

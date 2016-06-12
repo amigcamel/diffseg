@@ -90,9 +90,22 @@
         </div>
         {% endverbatim %}
     </div>
+
+    <br><br>
+    {% verbatim %}
+    <div class="container" ng-show="segs">
+        <div class="row">
+            <div class="col-lg-{{12/segs.length}}" ng-repeat="seg in segs">
+                <div class="alert alert-info" ng-bind-html="seg"></div>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+
     <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
     <script src="{% static 'bower_components/underscore/underscore-min.js' %}"></script> 
     <script src="{% static 'bower_components/angular/angular.min.js' %}"></script> 
+    <script src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script> 
     <script src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script> 
     <script src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script> 
     <script src="{% static 'bower_components/angular-file-upload/dist/angular-file-upload.min.js' %}"></script>
