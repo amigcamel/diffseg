@@ -7,12 +7,12 @@ angular.module('DiffsegApp', ['angularFileUpload', 'angular-loading-bar'])
 
 .controller('MainCtrl', ['$scope', 'FileUploader', '$http', function($scope, FileUploader, $http) {
 
-    $scope.source_text = '今天天氣很好';
+    $scope.source_text = '上海自來水來自海上';
 
 	$scope.segmentators = {
 		LIVAC: true,
-		DeepSeg: false,
-		Thulac: false,
+		Thulac: true,
+        DeepSeg: false,
 	};
 
     $scope.seg = function() {
