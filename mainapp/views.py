@@ -1,12 +1,13 @@
 """Views."""
 import re
+import os
 import json
 from multiprocessing.pool import ThreadPool
 from itertools import repeat
 
 import requests
 from django.shortcuts import HttpResponse, Http404
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
 
 def livac(source_text):
@@ -104,3 +105,18 @@ def seg(request):
         return HttpResponse('')
 
     return Http404
+
+
+@csrf_exempt
+def uploader(request):
+    """
+    Attachment uploadder.
+
+    TODO: remove @csrf_exempt
+    """
+    for filename, file in request.FILES.items():
+        name = request.FILES[filename].name
+        path = os.path.join('/tmp', name)
+        with open(path, 'wb') as f:
+            f.write(file.read())
+    return HttpResponse('ok')

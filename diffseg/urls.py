@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
     url(r'seg/$', 'mainapp.views.seg', name='seg'),
+    url(r'uploader/$', 'mainapp.views.uploader', name='uploader'),
 ]
