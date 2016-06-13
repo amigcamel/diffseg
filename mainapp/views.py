@@ -46,7 +46,7 @@ def deepseg(source_text):
     resp = requests.post(url, data=json.dumps(data), headers=headers)
     res = json.loads(resp.text)['result']
     res = re.sub(' +', ' ', res)
-    return res
+    return res.split(' ')
 
 
 def segcomp(segres_list):
