@@ -1,4 +1,4 @@
-angular.module('DiffsegApp', ['angularFileUpload', 'angular-loading-bar', 'ngSanitize'])
+angular.module('DiffsegApp', ['ui.bootstrap', 'angularFileUpload', 'angular-loading-bar', 'ngSanitize'])
 
 .config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
@@ -6,6 +6,8 @@ angular.module('DiffsegApp', ['angularFileUpload', 'angular-loading-bar', 'ngSan
 }])
 
 .controller('MainCtrl', ['$scope', 'FileUploader', '$http', function($scope, FileUploader, $http) {
+
+    $http.get(Urls.index());  // get csrf cookies;
 
     $scope.source_text = '上海自來水來自海上';
 

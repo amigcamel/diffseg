@@ -72,9 +72,18 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div class="form-group">
-                    <textarea ng-model="source_text" class="form-control" rows="10"></textarea>
-                </div>
+                <uib-tabset active="active">
+                    <uib-tab index="0" heading="貼上文本">
+                        <br>
+                        <div class="form-group">
+                            <textarea ng-model="source_text" class="form-control" rows="10"></textarea>
+                        </div>        
+                    </uib-tab>
+                    <uib-tab index="1" heading="上傳檔案">
+                        <br>
+                        上傳檔案
+                    </uib-tab>
+                </uib-tabset>
             </div>
         </div>
         {% verbatim %}
@@ -107,6 +116,7 @@
     <script src="{% static 'bower_components/underscore/underscore-min.js' %}"></script> 
     <script src="{% static 'bower_components/angular/angular.min.js' %}"></script> 
     <script src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script> 
+    <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js' %}"></script> 
     <script src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script> 
     <script src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script> 
     <script src="{% static 'bower_components/angular-file-upload/dist/angular-file-upload.min.js' %}"></script>
