@@ -38,6 +38,17 @@ def thulac(source_text):
     return resp.text.split(' ')
 
 
+def deepseg(source_text):
+    """DeepSeg."""
+    url = 'http://localhost:8081/deepseg'
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    data = {'data': source_text}
+    resp = requests.post(url, data=json.dumps(data), headers=headers)
+    res = json.loads(resp.text)['result']
+    res = re.sub(' +', ' ', res)
+    return res
+
+
 def segcomp(segres_list):
     """
     Compare results of different segmentators.
