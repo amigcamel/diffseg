@@ -6,6 +6,7 @@ from itertools import repeat
 
 import requests
 from django.shortcuts import HttpResponse, Http404
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 def livac(source_text):
@@ -74,6 +75,7 @@ def _segwrap(segmentator, source_text):
     return globals()[segmentator](source_text)
 
 
+@ensure_csrf_cookie
 def seg(request):
     """View for seg."""
     if request.method == 'POST':
@@ -87,5 +89,7 @@ def seg(request):
         vals = res.get()
         seg_with_diff = segcomp(vals)
         return HttpResponse(json.dumps(seg_with_diff), content_type="application/json")
+    elif request.method == 'GET':
+        return HttpResponse('')
 
     return Http404

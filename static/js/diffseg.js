@@ -7,7 +7,7 @@ angular.module('DiffsegApp', ['ui.bootstrap', 'angularFileUpload', 'angular-load
 
 .controller('MainCtrl', ['$scope', 'FileUploader', '$http', function($scope, FileUploader, $http) {
 
-    $http.get(Urls.index());  // get csrf cookies;
+    $http.get(Urls.seg());  // get csrf cookies;
 
     $scope.source_text = '上海自來水來自海上';
 
