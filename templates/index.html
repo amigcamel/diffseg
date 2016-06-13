@@ -72,6 +72,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
+                {% comment %}
                 <uib-tabset active="active">
                     <uib-tab index="0" heading="貼上文本">
                         <br>
@@ -84,6 +85,10 @@
                         上傳檔案
                     </uib-tab>
                 </uib-tabset>
+                {% endcomment %}
+                <div class="form-group">
+                    <textarea ng-model="source_text" class="form-control" rows="10"></textarea>
+                </div>        
             </div>
         </div>
         {% verbatim %}
