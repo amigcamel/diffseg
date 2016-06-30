@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
     url(r'seg/$', 'mainapp.views.seg', name='seg'),
     url(r'uploader/$', 'mainapp.views.uploader', name='uploader'),
+    url(r'fbauth/$', 'accmgr.views.fbauth', name='fbauth'),
 ]

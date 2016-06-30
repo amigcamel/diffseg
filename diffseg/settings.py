@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_js_reverse',
     'mainapp',
+    'accmgr'
 ]
 
 MIDDLEWARE_CLASSES = [
