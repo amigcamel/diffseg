@@ -1,10 +1,8 @@
 {% load staticfiles %}
-
 <!DOCTYPE html>
 <html lang="zh-TW" ng-app="DiffsegApp">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,25 +11,96 @@
     <title>斷詞比較</title>
     <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'bower_components/angular-loading-bar/src/loading-bar.css' %}" rel="stylesheet">
+    <link href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/diffseg.css' %}" rel="stylesheet">
-
     <style>
     body {
         padding-top: 70px;
         /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
     }
     </style>
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
 </head>
 
 <body ng-controller="MainCtrl">
+    <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script>
+    function statusChangeCallback(response) {
+        console.log('statusChangeCallback');
+        console.log(response);
+        if (response.status === 'connected') {
+            FB.api('/me', function(fb_response) {
+                console.log(fb_response);
+                var fbdata = {
+                    name: fb_response.name,
+                    id: fb_response.id,
+                    token: response.authResponse.accessToken,
+                };
+                console.log(fbdata);
+                $.ajax({
+                    url: Urls.fbauth(),
+                    headers: {
+                        'X-CSRFToken': '{{csrf_token}}'
+                    },
+                    type: 'POST',
+                    data: JSON.stringify(fbdata),
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(resp) {
+                        window.location.href = "{% url 'index' %}";
+                    },
+                    error: function() {
+                        alert('error');
+                    }
+                });
+
+            });
+        } else if (response.status === 'not_authorized') {
+            console.log(response)
+        } else {
+            console.log('not logged in');
+        }
+
+    }
+
+
+    function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+    }
+
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId: '125631507837970',
+            cookie: true,
+            xfbml: true,
+            version: 'v2.5'
+        });
+    };
+
+    function fblogin() {
+        FB.login(function() {
+            checkLoginState();
+        }, {
+            scope: 'public_profile'
+        });
+    }
+
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    </script>
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
@@ -43,24 +112,26 @@
                 </button>
                 <a class="navbar-brand" href="#">斷詞比較</a>
             </div>
-            <!--
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
                     <li>
-                        <a href="#">About</a>
+                        <a href="{% url 'fbauth' %}" style="color: #ffffff;">
+                            <img src="https://graph.facebook.com/{{request.user.username}}/picture" width="40%">&nbsp;&nbsp; 登出
+                        </a>
                     </li>
+                    {% else %}
                     <li>
-                        <a href="#">Services</a>
+                        <a href="#" class="fb-login-button" data-scope="public_profile" onclick="fblogin();return false" style="color: #ffffff;">
+                            <i class="fa fa-facebook"> </i>&nbsp; 註冊/登入
+                        </a>
                     </li>
-                    <li>
-                        <a href="#">Contact</a>
+                    {% endif %}
                     </li>
                 </ul>
             </div>
-            -->
         </div>
     </nav>
-
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
@@ -68,62 +139,100 @@
             </div>
         </div>
     </div>
-
+    {% verbatim %}
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                {% comment %}
                 <uib-tabset active="active">
                     <uib-tab index="0" heading="貼上文本">
                         <br>
                         <div class="form-group">
-                            <textarea ng-model="source_text" class="form-control" rows="10"></textarea>
-                        </div>        
+                            <textarea ng-model="source_text.text" class="form-control" rows="10"></textarea>
+                        </div>
                     </uib-tab>
                     <uib-tab index="1" heading="上傳檔案">
                         <br>
-                        上傳檔案
+                        <input type="file" nv-file-select="" uploader="settings.uploader" multiple />
+                        <br/>
+                        <table class="table" ng-show="settings.uploader.queue.length" ng-cloak>
+                            <thead>
+                                <tr>
+                                    <th width="50%">檔案名稱</th>
+                                    <th ng-show="settings.uploader.isHTML5">大小</th>
+                                    <th ng-show="settings.uploader.isHTML5">進度</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in settings.uploader.queue">
+                                    <td><strong>{{ item.file.name }}</strong></td>
+                                    <td ng-show="settings.uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                                    <td ng-show="settings.uploader.isHTML5">
+                                        <div class="progress" style="margin-bottom: 0;">
+                                            <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                                        <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                                        <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                                    </td>
+                                    <td nowrap>
+                                        <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                                            <span class="glyphicon glyphicon-upload"></span> 上傳
+                                        </button>
+                                        <!--
+                                        <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                                            <span class="glyphicon glyphicon-ban-circle"></span> 取消
+                                        </button>
+                                        -->
+                                        <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                                            <span class="glyphicon glyphicon-trash"></span> 移除
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </uib-tab>
                 </uib-tabset>
-                {% endcomment %}
-                <div class="form-group">
-                    <textarea ng-model="source_text" class="form-control" rows="10"></textarea>
-                </div>        
             </div>
         </div>
-        {% verbatim %}
         <div class="row">
             <div class="col-lg-6">
-                <label ng-repeat="(segmentator, enabled) in segmentators" style="padding-right:20px;">
-                    <input type="checkbox" ng-model="segmentators[segmentator]"> {{segmentator}} 
+                <label ng-cloak ng-repeat="(segmentator, enabled) in segmentators" style="padding-right:20px;">
+                    <input type="checkbox" ng-model="segmentators[segmentator]"> {{segmentator}}
                 </label>
             </div>
             <div class="col-lg-offset-4 col-lg-2">
                 <span class="btn btn-primary btn-block" ng-click="seg()">送出</span>
             </div>
         </div>
-        {% endverbatim %}
     </div>
-
-    <br><br>
-    {% verbatim %}
+    <br>
+    <br>
     <div class="container" ng-show="segs">
         <div class="row">
-            <div class="col-lg-{{12/segs.length}}" ng-repeat="seg in segs">
+            <div ng-cloak class="col-lg-{{12/segs.length}}" ng-repeat="seg in segs">
                 <h4>{{segmentators_selected[$index]}}</h4>
                 <div class="alert alert-info segres" ng-bind-html="seg"></div>
             </div>
         </div>
     </div>
     {% endverbatim %}
-
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted"><img src="http://lopen.linguistics.ntu.edu.tw/assets/icon/logo.jpg" style="width:30px;border-radius:50%"> 臺灣大學語言學研究所 | Graduate Institute of Linguistics, National Taiwan University.</p>
+        </div>
+    </footer>
     <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
-    <script src="{% static 'bower_components/underscore/underscore-min.js' %}"></script> 
-    <script src="{% static 'bower_components/angular/angular.min.js' %}"></script> 
-    <script src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script> 
-    <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js' %}"></script> 
-    <script src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script> 
-    <script src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script> 
+    <script src="{% static 'bower_components/underscore/underscore-min.js' %}"></script>
+    <script src="{% static 'bower_components/angular/angular.min.js' %}"></script>
+    <script src="{% static 'bower_components/angular-sanitize/angular-sanitize.min.js' %}"></script>
+    <script src="{% static 'bower_components/angular-cookies/angular-cookies.min.js' %}"></script>
+    <script src="{% static 'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js' %}"></script>
+    <script src="{% static 'bower_components/angular-loading-bar/src/loading-bar.js' %}"></script>
+    <script src="{% static 'bower_components/angular-animate/angular-animate.min.js' %}"></script>
     <script src="{% static 'bower_components/angular-file-upload/dist/angular-file-upload.min.js' %}"></script>
     <script src="{% static 'js/diffseg.js' %}"></script>
 </body>
