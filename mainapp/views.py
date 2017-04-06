@@ -2,10 +2,12 @@
 import re
 import os
 import json
+import pdb
 from multiprocessing.pool import ThreadPool
 from itertools import repeat
 
 import requests
+import thulac as thulacSeg
 from django.shortcuts import HttpResponse, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
@@ -35,9 +37,11 @@ def thulac(source_text):
     """THULAC segmentator."""
     url = 'http://localhost:5000/'
     data = {'source_text': source_text}
-    resp = requests.post(url, data=data)
-    return resp.text.split(' ')
-
+    # resp = requests.post(url, data=data)
+    # return resp.text.split(' ')
+    thu = thulacSeg.thulac(seg_only=True, model_path = "thulac/models/")
+    segtxt = [x[0] for x in thu.cut(source_text)]
+    return segtxt
 
 def deepseg(source_text):
     """DeepSeg."""
