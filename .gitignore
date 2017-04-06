@@ -4,3 +4,5 @@
 .python-version
 db.sqlite3
 */.credential.conf
+static_diffseg/*
+*.log
