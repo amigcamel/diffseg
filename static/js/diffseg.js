@@ -19,7 +19,7 @@ angular.module('DiffsegApp', ['ui.bootstrap', 'angularFileUpload', 'angular-load
 	$scope.segmentators = {
 		LIVAC: true,
 		Thulac: true,
-        DeepSeg: true,
+        DeepSeg: false,
 	};
 
     $scope.seg = function() {
