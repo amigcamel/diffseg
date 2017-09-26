@@ -11,20 +11,13 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-from configparser import ConfigParser
 
 try:
-    import MySQLdb
+    import MySQLdb  # noqa
 except ImportError:
     import pymysql
     pymysql.install_as_MySQLdb()
 
-
-config = ConfigParser()
-config_path = config.read(os.path.join(
-    os.path.dirname(__file__), '.credential.conf'))
-if not config_path:
-    raise FileNotFoundError('Please config the credential first!')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -99,10 +92,10 @@ WSGI_APPLICATION = 'diffseg.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'USER': config.get('db', 'user'),
-        'PASSWORD': config.get('db', 'password'),
-        'HOST': config.get('db', 'host'),
-        'NAME': config.get('db', 'database'),
+        'USER': 'lope',
+        'PASSWORD': 'lope',
+        'HOST': 'diffseg_db',
+        'NAME': 'diffseg',
     }
 }
 
