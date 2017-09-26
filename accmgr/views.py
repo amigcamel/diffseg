@@ -1,3 +1,4 @@
+"""Views."""
 import json
 from hashlib import md5
 from datetime import datetime
@@ -23,7 +24,10 @@ def fbauth(request):
         if user_set:
             user = user_set[0]
         else:
-            url = 'https://graph.facebook.com/{uid}?fields=id,name,email&access_token={access_token}'.format(
+            url = (
+                'https://graph.facebook.com/{uid}?'
+                'fields=id,name,email&access_token={access_token}'
+            ).format(
                 uid=username,
                 access_token=access_token,
             )
@@ -34,7 +38,8 @@ def fbauth(request):
             d = resp.json()
             email = d.get('email')
             password = md5(str(datetime.now()).encode('utf-8')).hexdigest()
-            user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(
+                username=username, password=password)
             displayname = data['name']
             ip = get_real_ip(request)
             ip = ip if ip else get_ip(request)

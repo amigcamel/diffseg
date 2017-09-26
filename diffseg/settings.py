@@ -21,7 +21,8 @@ except ImportError:
 
 
 config = ConfigParser()
-config_path = config.read(os.path.join(os.path.dirname(__file__), '.credential.conf'))
+config_path = config.read(os.path.join(
+    os.path.dirname(__file__), '.credential.conf'))
 if not config_path:
     raise FileNotFoundError('Please config the credential first!')
 

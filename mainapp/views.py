@@ -39,9 +39,10 @@ def thulac(source_text):
     data = {'source_text': source_text}
     # resp = requests.post(url, data=data)
     # return resp.text.split(' ')
-    thu = thulacSeg.thulac(seg_only=True, model_path = "thulac/models/")
+    thu = thulacSeg.thulac(seg_only=True, model_path="thulac/models/")
     segtxt = [x[0] for x in thu.cut(source_text)]
     return segtxt
+
 
 def deepseg(source_text):
     """DeepSeg."""
@@ -78,7 +79,8 @@ def segcomp(segres_list):
             if hw in intsec:
                 con.append(''.join(pat.findall(hw)))
             else:
-                con.append('<span class="diff">' + ''.join(pat.findall(hw)) + '</span>')
+                con.append('<span class="diff">' +
+                           ''.join(pat.findall(hw)) + '</span>')
         return ' '.join(con)
 
     hwl = [_idxer(segres) for segres in segres_list]  # hwl: hash words list
@@ -101,7 +103,8 @@ def seg(request):
         segmentators = data['segmentators']
         segmentators = [i.lower() for i in segmentators]
         pool = ThreadPool(processes=5)
-        res = pool.starmap_async(_segwrap, zip(segmentators, repeat(source_text)))
+        res = pool.starmap_async(_segwrap, zip(
+            segmentators, repeat(source_text)))
         vals = res.get()
         seg_with_diff = segcomp(vals)
         return HttpResponse(json.dumps(seg_with_diff), content_type="application/json")
