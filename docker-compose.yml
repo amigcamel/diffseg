@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+  mariadb:
+    restart: always
+    image: mariadb:10.2.8
+    hostname: diffseg_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=lope
+      - MYSQL_USER=lope
+      - MYSQL_PASSWORD=lope
+      - MYSQL_DATABASE=diffseg
+    volumes:
+      - mariadb:/var/lib/mysql
+    ports:
+      - "33060:3306"
+    container_name: diffseg_db
+  django:
+    restart: always
+    build: .
+    working_dir: /diffseg
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./:/diffseg
+    ports:
+      - "8000:8000"
+    container_name: diffseg_django
+
+volumes:
+    django:
+    mariadb:
