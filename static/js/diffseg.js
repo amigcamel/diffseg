@@ -17,9 +17,9 @@ angular.module('DiffsegApp', ['ui.bootstrap', 'angularFileUpload', 'angular-load
     $scope.source_text = {text: '陳男因光頭特徵太明顯，通過走道相當好認，而他才離開40秒，聽到轟轟聲響，驚覺不對勁，雖急忙返回，但已救不了火。軍方表示，戰情室猶如軍艦的心臟，具有高度機敏資料，涉及國防安全，並未安裝監視系統，連拍照或攜帶智慧型手機皆不得，以免軍情外洩，金江艦亦是如此。'};
 
 	$scope.segmentators = {
-		LIVAC: true,
+		LIVAC: false,
 		Thulac: true,
-        DeepSeg: false,
+                DeepSeg: true,
 	};
 
     $scope.seg = function() {
