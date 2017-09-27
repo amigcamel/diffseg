@@ -2,19 +2,23 @@
 import re
 import os
 import json
-import pdb
 from multiprocessing.pool import ThreadPool
 from itertools import repeat
 
 import requests
 import thulac as thulac_seg
 from deepseg import DeepSeg
+import jieba as jb
+from jseg import Jieba
 from django.shortcuts import HttpResponse, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
 
 thu = thulac_seg.thulac(seg_only=True)
 ds = DeepSeg()
+js = Jieba()
+jb.initialize()
+
 
 def livac(source_text):
     """
@@ -38,13 +42,23 @@ def livac(source_text):
 
 
 def thulac(source_text):
-    """THULAC segmentator.""" 
+    """THULAC segmentator."""
     return [x[0] for x in thu.cut(source_text)]
 
 
 def deepseg(source_text):
     """DeepSeg."""
     return ds.cut(source_text)
+
+
+def jseg(source_text):
+    """Jseg."""
+    return js.seg(source_text)
+
+
+def jieba(source_text):
+    """Jieba."""
+    return jb.cut(source_text)
 
 
 def segcomp(segres_list):
@@ -99,7 +113,8 @@ def seg(request):
             segmentators, repeat(source_text)))
         vals = res.get()
         seg_with_diff = segcomp(vals)
-        return HttpResponse(json.dumps(seg_with_diff), content_type="application/json")
+        return HttpResponse(
+            json.dumps(seg_with_diff), content_type="application/json")
     elif request.method == 'GET':
         return HttpResponse('')
 
