@@ -7,10 +7,14 @@ from multiprocessing.pool import ThreadPool
 from itertools import repeat
 
 import requests
-import thulac as thulacSeg
+import thulac as thulac_seg
+from deepseg import DeepSeg
 from django.shortcuts import HttpResponse, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
+
+thu = thulac_seg.thulac(seg_only=True)
+ds = DeepSeg()
 
 def livac(source_text):
     """
@@ -34,25 +38,13 @@ def livac(source_text):
 
 
 def thulac(source_text):
-    """THULAC segmentator."""
-    url = 'http://localhost:5000/'
-    data = {'source_text': source_text}
-    # resp = requests.post(url, data=data)
-    # return resp.text.split(' ')
-    thu = thulacSeg.thulac(seg_only=True, model_path="thulac/models/")
-    segtxt = [x[0] for x in thu.cut(source_text)]
-    return segtxt
+    """THULAC segmentator.""" 
+    return [x[0] for x in thu.cut(source_text)]
 
 
 def deepseg(source_text):
     """DeepSeg."""
-    url = 'http://localhost:8081/deepseg'
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    data = {'data': source_text}
-    resp = requests.post(url, data=json.dumps(data), headers=headers)
-    res = json.loads(resp.text)['result']
-    res = re.sub(' +', ' ', res)
-    return res.split(' ')
+    return ds.cut(source_text)
 
 
 def segcomp(segres_list):
