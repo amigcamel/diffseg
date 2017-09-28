@@ -19,12 +19,12 @@ services:
     restart: always
     build: .
     working_dir: /diffseg
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/diffseg
     ports:
-      - "8000:8000"
+      - "8000:80"
     container_name: diffseg_django
+    tty: true
 
 volumes:
     django:
