@@ -4,20 +4,37 @@ import os
 import json
 from multiprocessing.pool import ThreadPool
 from itertools import repeat
+from threading import Thread
+from collections import namedtuple
 
 import requests
-import thulac as thulac_seg
-from deepseg import DeepSeg
-import jieba as jb
-from jseg import Jieba
 from django.shortcuts import HttpResponse, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
 
-thu = thulac_seg.thulac(seg_only=True)
-ds = DeepSeg()
-js = Jieba()
-jb.initialize()
+
+def _load_models():
+    """Load model for all segmentators."""
+    from thulac import thulac
+    from deepseg import DeepSeg
+    from jseg import Jieba
+    import jieba
+
+    Segs = namedtuple('Segs', [])
+    Segs.jieba = jieba
+
+    for func in (
+        lambda: setattr(Segs, 'thulac', thulac(seg_only=True)),
+        lambda: setattr(Segs, 'deepseg', DeepSeg()),
+        lambda: setattr(Segs, 'jseg', Jieba()),
+        lambda: jieba.initialize(),
+    ):
+        thread = Thread(target=func)
+        thread.start()
+    return Segs
+
+
+Segs = _load_models()
 
 
 def livac(source_text):
@@ -43,22 +60,22 @@ def livac(source_text):
 
 def thulac(source_text):
     """THULAC segmentator."""
-    return [x[0] for x in thu.cut(source_text)]
+    return [x[0] for x in Segs.thulac.cut(source_text)]
 
 
 def deepseg(source_text):
     """DeepSeg."""
-    return ds.cut(source_text)
+    return Segs.deepseg.cut(source_text)
 
 
 def jseg(source_text):
     """Jseg."""
-    return js.seg(source_text)
+    return Segs.jseg.seg(source_text)
 
 
 def jieba(source_text):
     """Jieba."""
-    return jb.cut(source_text)
+    return Segs.jieba.cut(source_text)
 
 
 def segcomp(segres_list):
