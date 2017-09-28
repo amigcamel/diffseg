@@ -18,14 +18,10 @@ services:
   django:
     restart: always
     build: .
-    working_dir: /diffseg
-    volumes:
-      - ./:/diffseg
     ports:
       - "8000:80"
     container_name: diffseg_django
     tty: true
 
 volumes:
-    django:
     mariadb:
