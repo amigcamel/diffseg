@@ -19,7 +19,7 @@ services:
     restart: always
     build: .
     ports:
-      - "8000:80"
+      - "8123:80"
     container_name: diffseg_django
     tty: true
 
