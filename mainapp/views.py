@@ -12,7 +12,6 @@ from django.shortcuts import HttpResponse, Http404
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
 
-
 def _load_models():
     """Load model for all segmentators."""
     from thulac import thulac
@@ -20,21 +19,22 @@ def _load_models():
     from jseg import Jieba
     import jieba
 
-    Segs = namedtuple('Segs', [])
-    Segs.jieba = jieba
+    segs = {'jieba': jieba}
 
     for func in (
-        lambda: setattr(Segs, 'thulac', thulac(seg_only=True)),
-        lambda: setattr(Segs, 'deepseg', DeepSeg()),
-        lambda: setattr(Segs, 'jseg', Jieba()),
+        lambda: segs.__setitem__('thulac', thulac(seg_only=True)),
+        lambda: segs.__setitem__('deepseg', DeepSeg()),
+        lambda: segs.__setitem__('jseg', Jieba()),
         lambda: jieba.initialize(),
     ):
         thread = Thread(target=func)
         thread.start()
-    return Segs
+    while True:
+        if len(segs) == 4:
+            return segs
 
 
-Segs = _load_models()
+segs = _load_models()
 
 
 def livac(source_text):
@@ -60,22 +60,22 @@ def livac(source_text):
 
 def thulac(source_text):
     """THULAC segmentator."""
-    return [x[0] for x in Segs.thulac.cut(source_text)]
+    return [x[0] for x in segs['thulac'].cut(source_text)]
 
 
 def deepseg(source_text):
     """DeepSeg."""
-    return Segs.deepseg.cut(source_text)
+    return segs['deepseg'].cut(source_text)
 
 
 def jseg(source_text):
     """Jseg."""
-    return Segs.jseg.seg(source_text)
+    return segs['jseg'].seg(source_text)
 
 
 def jieba(source_text):
     """Jieba."""
-    return Segs.jieba.cut(source_text)
+    return segs['jieba'].cut(source_text)
 
 
 def segcomp(segres_list):
