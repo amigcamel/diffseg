@@ -74,14 +74,14 @@ angular.module('DiffsegApp', ['ui.bootstrap', 'angularFileUpload', 'angular-load
 
     $scope.settings = {};
     $scope.settings.uploader = new FileUploader({
-        url: '/uploader/'
+        url: Urls.uploader()
     });
     $scope.initUploader = function() {
         $scope.settings.uploader = new FileUploader({
             headers : {
                 'X-CSRFTOKEN' : csrftoken
             },
-            url: Urls().uploader()
+            url: Urls.uploader()
         });
     };
 
